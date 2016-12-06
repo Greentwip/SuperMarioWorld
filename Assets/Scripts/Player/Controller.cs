@@ -35,6 +35,8 @@ public class Controller : MonoBehaviour {
 
     void FixedUpdate()
     {
+
+
         float x_input = Input.GetAxis("Horizontal");
         float y_input = Input.GetAxis("Vertical");
 
@@ -90,7 +92,7 @@ public class Controller : MonoBehaviour {
             animator.SetBool("is_crouching", false); // setting is_crouching animator parameter
         }
 
-        bool is_looking_up = y_input > 0;
+        bool is_looking_up = y_input > 0 && Mathf.Abs(x_input) < 0.1f; // can't look up while walking
         if (is_looking_up)
         {
             animator.SetBool("is_looking_up", true); // setting animator parameter
@@ -115,10 +117,11 @@ public class Controller : MonoBehaviour {
             Vector3 clamp_velocity= rigid_body.velocity;
             clamp_velocity.x = Mathf.Clamp(clamp_velocity.x, -TopSpeed, TopSpeed);
             rigid_body.velocity = clamp_velocity;
+
+            animator.SetFloat("y_speed", clamp_velocity.y);
+
         }
       
-
-
         // setting animation parameter on_ground
         animator.SetBool("on_ground", on_ground);
 
