@@ -148,9 +148,11 @@ public class Controller : MonoBehaviour {
         }
 
         // validation for running
-        if (Input.GetKey(KeyCode.Z)) 
+        if (Input.GetKey(KeyCode.Z) && x_movement != 0) 
         {
-            is_running = true; 
+            is_running = true;
+
+            animator.SetBool("is_running", is_running);
 
             TopSpeed = TopSpeedBound + TopSpeedBound * 0.25f;
 
@@ -159,7 +161,7 @@ public class Controller : MonoBehaviour {
                 TopSpeed = TopSpeedBound + TopSpeedBound * 0.65f;
             } else
             {
-                StartCoroutine(verify_turbo());
+                StartCoroutine("verify_turbo");
             }
         }
         else
@@ -167,6 +169,9 @@ public class Controller : MonoBehaviour {
             TopSpeed = TopSpeedBound;
             is_running = false;
             is_turbo = false;
+
+            animator.SetBool("is_running", is_running);
+            animator.SetBool("is_turbo", is_turbo);
         }
 
     }
@@ -178,10 +183,11 @@ public class Controller : MonoBehaviour {
         if (is_running)
         {
             is_turbo = true;
+            animator.SetBool("is_turbo", is_turbo);
         }
         else
         {
-            StopCoroutine(verify_turbo());
+            StopCoroutine("verify_turbo");
         }
 
     }
