@@ -9,6 +9,7 @@ public class Controller : MonoBehaviour {
     public float TopWalkSpeed = 128f;
     public float TopRunSpeed = 128f;
     public float TopSpeed = 128f;
+    float TopSpeedBound = 128f;
 
     public LayerMask PlatformMask;
 
@@ -17,7 +18,7 @@ public class Controller : MonoBehaviour {
     private void Awake()
     {
         animator = GetComponent<Animator>();
-
+        TopSpeedBound = TopSpeed;
     }
 
     // Use this for initialization
@@ -145,7 +146,48 @@ public class Controller : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space) && on_ground)   {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0, JumpForce)); // adding jump force
         }
+
+        // validation for running
+        if (Input.GetKey(KeyCode.Z)) 
+        {
+            is_running = true; 
+
+            TopSpeed = TopSpeedBound + TopSpeedBound * 0.25f;
+
+            if (is_turbo)
+            {
+                TopSpeed = TopSpeedBound + TopSpeedBound * 0.65f;
+            } else
+            {
+                StartCoroutine(verify_turbo());
+            }
+        }
+        else
+        {
+            TopSpeed = TopSpeedBound;
+            is_running = false;
+            is_turbo = false;
+        }
+
     }
+
+    private IEnumerator verify_turbo()
+    {
+        yield return new WaitForSeconds(2);
+
+        if (is_running)
+        {
+            is_turbo = true;
+        }
+        else
+        {
+            StopCoroutine(verify_turbo());
+        }
+
+    }
+
+    bool is_running = false;
+    bool is_turbo = false;
 
     /*private void OnCollisionEnter(Collision collision) //@TODO
     {
