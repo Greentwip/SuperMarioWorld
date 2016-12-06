@@ -79,7 +79,7 @@ public class Controller : MonoBehaviour {
         }
         else // x_input == 0 means no horizontal movement
         {
-            animator.SetFloat("x_speed", 0);
+            animator.SetFloat("x_speed", -1);
         }
 
      
@@ -120,13 +120,29 @@ public class Controller : MonoBehaviour {
 
             animator.SetFloat("y_speed", clamp_velocity.y);
 
+
+            // drifting
+
+            if(clamp_velocity.x > 0 && x_input < 0.0)
+            {
+                animator.SetBool("is_drifting", true);
+                animator.SetInteger("drift", 1);
+            } else if(clamp_velocity.x < 0 && x_input > 0)
+            {
+                animator.SetBool("is_drifting", true);
+                animator.SetInteger("drift", 1);
+            } else
+            {
+                animator.SetBool("is_drifting", false);
+                animator.SetInteger("drift", 0);
+            }
         }
       
         // setting animation parameter on_ground
         animator.SetBool("on_ground", on_ground);
 
         // validation for jumping
-        if (Input.GetKeyDown(KeyCode.Space) && on_ground){
+        if (Input.GetKeyDown(KeyCode.Space) && on_ground)   {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0, JumpForce)); // adding jump force
         }
     }
