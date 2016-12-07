@@ -252,17 +252,26 @@ public class Controller : MonoBehaviour {
         // If the player enters the trigger zone...
         if (other.gameObject.tag == "CarryItem")
         {
-            // verify pressed key
-            if (Input.GetKey(KeyCode.Z))
+            var shell = other.gameObject.GetComponent<Shell>();
+
+            if (shell.is_moving)
             {
-                pick_item_up(other.gameObject);
+                shell.is_moving = false;
+                var rigid_body = shell.GetComponent<Rigidbody2D>();
+                rigid_body.velocity = new Vector2();
             }
             else
             {
-                kick_item(other.gameObject);
-            }
-
-
+                // verify pressed key
+                if (Input.GetKey(KeyCode.Z))
+                {
+                    pick_item_up(other.gameObject);
+                }
+                else
+                {
+                    kick_item(other.gameObject);
+                }
+            }                        
         }
 
     }
