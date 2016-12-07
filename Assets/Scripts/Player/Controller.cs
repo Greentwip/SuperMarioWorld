@@ -5,6 +5,7 @@ using UnityEngine;
 public class Controller : MonoBehaviour {
 
     public float WalkSpeed = 768f;
+    public float KickPower = 8192f;
     public float JumpForce = 14000f;
     public float TopWalkSpeed = 128f;
     public float TopRunSpeed = 128f;
@@ -15,7 +16,7 @@ public class Controller : MonoBehaviour {
 
     Animator animator;
 
-    Component item_held;
+    GameObject item_held;
 
 
     private void Awake()
@@ -34,7 +35,7 @@ public class Controller : MonoBehaviour {
 		
 	}
 
-    public void pick_item_up(Component item)
+    public void pick_item_up(GameObject item)
     {
         if (item_held == null)
         {
@@ -62,13 +63,18 @@ public class Controller : MonoBehaviour {
         }
 
     }
-    public void kick_item(Component item)
+    public void kick_item(GameObject item)
     {
         var item_rigid_body = item.GetComponent<Rigidbody2D>();
         var rigid_body = GetComponent<Rigidbody2D>();
         var local_scale = rigid_body.transform.localScale;
 
-        item_rigid_body.AddForce(new Vector2(WalkSpeed * local_scale.x, 0));
+        item_rigid_body.AddForce(new Vector2(KickPower * local_scale.x, 0));
+
+        if(item.GetComponent<AudioSource>() != null)
+        {
+            item.GetComponent<AudioSource>().Play();
+        }
     }
 
     void FixedUpdate()
@@ -241,6 +247,25 @@ public class Controller : MonoBehaviour {
     bool is_running = false;
     bool is_turbo = false;
 
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        // If the player enters the trigger zone...
+        if (other.gameObject.tag == "CarryItem")
+        {
+            // verify pressed key
+            if (Input.GetKey(KeyCode.Z))
+            {
+                pick_item_up(other.gameObject);
+            }
+            else
+            {
+                kick_item(other.gameObject);
+            }
+
+
+        }
+
+    }
     /*private void OnCollisionEnter(Collision collision) //@TODO
     {
         //collision.gameObject.layer == PlatformMask && collision.transform.nor
