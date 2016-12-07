@@ -250,7 +250,7 @@ public class Controller : MonoBehaviour {
     void OnCollisionEnter2D(Collision2D other)
     {
         // If the player enters the trigger zone...
-        if (other.gameObject.tag == "CarryItem")
+        if (other.gameObject.tag == "Shell")
         {
             var shell = other.gameObject.GetComponent<Shell>();
 
