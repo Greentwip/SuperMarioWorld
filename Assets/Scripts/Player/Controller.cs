@@ -15,6 +15,9 @@ public class Controller : MonoBehaviour {
 
     Animator animator;
 
+    Component item_held;
+
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -31,8 +34,42 @@ public class Controller : MonoBehaviour {
 		
 	}
 
+    public void pick_item_up(Component item)
+    {
+        if (item_held == null)
+        {
+            item_held = item;
+            item_held.transform.parent = this.transform;
 
-    bool is_drifting = false; 
+            var item_rigid_body = item.GetComponent<Rigidbody2D>();
+            Destroy(item_rigid_body);
+        }
+    }
+
+    public void pick_item_down()
+    {
+        if (item_held != null)
+        {
+            item_held.transform.parent = null;
+            item_held.gameObject.AddComponent<Rigidbody2D>();
+
+            var item_rigid_body = item_held.GetComponent<Rigidbody2D>();
+            item_rigid_body.freezeRotation = true;
+
+            kick_item(item_held);
+
+            item_held = null;
+        }
+
+    }
+    public void kick_item(Component item)
+    {
+        var item_rigid_body = item.GetComponent<Rigidbody2D>();
+        var rigid_body = GetComponent<Rigidbody2D>();
+        var local_scale = rigid_body.transform.localScale;
+
+        item_rigid_body.AddForce(new Vector2(WalkSpeed * local_scale.x, 0));
+    }
 
     void FixedUpdate()
     {
@@ -159,10 +196,12 @@ public class Controller : MonoBehaviour {
             if (is_turbo)
             {
                 TopSpeed = TopSpeedBound + TopSpeedBound * 0.65f;
-            } else
+            }
+            else
             {
                 StartCoroutine("verify_turbo");
             }
+
         }
         else
         {
@@ -172,9 +211,16 @@ public class Controller : MonoBehaviour {
 
             animator.SetBool("is_running", is_running);
             animator.SetBool("is_turbo", is_turbo);
-        }
 
+            if(item_held != null && !Input.GetKey(KeyCode.Z))
+            {
+                pick_item_down();
+            }
+
+        }
     }
+   
+   
 
     private IEnumerator verify_turbo()
     {
