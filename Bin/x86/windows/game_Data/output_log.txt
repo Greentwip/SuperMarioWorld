@@ -19,9 +19,13 @@ Platform assembly: C:\Users\VictorLopez\Source\Repos\SuperMarioWorld\Bin\x86\win
 Loading C:\Users\VictorLopez\Source\Repos\SuperMarioWorld\Bin\x86\windows\game_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
 Platform assembly: C:\Users\VictorLopez\Source\Repos\SuperMarioWorld\Bin\x86\windows\game_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
 Loading C:\Users\VictorLopez\Source\Repos\SuperMarioWorld\Bin\x86\windows\game_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
-- Completed reload, in  0.044 seconds
+- Completed reload, in  0.050 seconds
 Platform assembly: C:\Users\VictorLopez\Source\Repos\SuperMarioWorld\Bin\x86\windows\game_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\VictorLopez\Source\Repos\SuperMarioWorld\Bin\x86\windows\game_Data\Managed\System.dll (this message is harmless)
 desktop: 1024x768 60Hz; virtual: 1024x768 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 2.115866 ms
+Setting up 1 worker threads for Enlighten.
+  Thread -> id: 1c2c -> priority: 1 

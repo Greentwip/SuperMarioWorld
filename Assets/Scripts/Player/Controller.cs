@@ -7,9 +7,11 @@ public class Controller : MonoBehaviour {
     public float WalkSpeed = 768f;
     public float KickPower = 8192f;
     public float JumpForce = 14000f;
+    public float SmallJumpForce = 4096f;
     public float TopWalkSpeed = 128f;
     public float TopRunSpeed = 128f;
     public float TopSpeed = 128f;
+    
     float TopSpeedBound = 128f;
 
     public LayerMask PlatformMask;
@@ -254,9 +256,29 @@ public class Controller : MonoBehaviour {
         {
             var shell = other.gameObject.GetComponent<Shell>();
 
-            if (shell.is_moving)
+            if (shell.is_moving())
             {
-                shell.is_moving = false;
+                // ray tracing
+                var ray = transform.FindChild("ray");
+
+                var ray_start = ray.transform.position;
+                var ray_top = new Vector2(ray.transform.position.x, ray.transform.position.y - 4);
+                RaycastHit2D[] top_hits = Physics2D.LinecastAll(ray_start, ray_top);
+
+                foreach (RaycastHit2D hit in top_hits)
+                {
+                    var collider = hit.collider;
+                    if (collider != null)
+                    {
+                        if (collider.gameObject.tag == "Shell")
+                        {
+                            var player_rigid_body = GetComponent<Rigidbody2D>();
+                            player_rigid_body.AddForce(new Vector2(0, SmallJumpForce));
+                        }
+                    }
+                }
+
+                shell.is_moving(false);
                 var rigid_body = shell.GetComponent<Rigidbody2D>();
                 rigid_body.velocity = new Vector2();
             }
