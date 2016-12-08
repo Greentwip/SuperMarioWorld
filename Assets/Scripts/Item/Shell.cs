@@ -6,13 +6,15 @@ public class Shell : MonoBehaviour {
 
     float XSpeed;
     float Acceleration = 96;
-    float TopSpeed = 256;
+    float TopSpeed = 320;
     float ray_length = 16;
 
     bool _is_moving = false;
 
 
     Animator animator;
+
+    public AudioClip RicochetSound;
 
     void Awake()
     {
@@ -32,11 +34,10 @@ public class Shell : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
-	}
-	
-	
-	void FixedUpdate () {
+    }
+
+
+    void FixedUpdate () {
 
         var rigid_body = GetComponent<Rigidbody2D>();
 
@@ -93,7 +94,9 @@ public class Shell : MonoBehaviour {
                 {
                     if (collider.gameObject.tag == "Platform")
                     {
-                        rigid_body.AddForce(new Vector2(-Acceleration * 2, 0));
+                        rigid_body.velocity = new Vector2(-Mathf.Abs(rigid_body.velocity.x), rigid_body.velocity.y);
+                        rigid_body.AddForce(new Vector2(-TopSpeed, 0));
+                        SoundManager.instance.PlaySingle(RicochetSound); 
                     }
                 }
             }
@@ -105,7 +108,9 @@ public class Shell : MonoBehaviour {
                 {
                     if (collider.gameObject.tag == "Platform")
                     {
-                        rigid_body.AddForce(new Vector2(Acceleration * 2, 0));
+                        rigid_body.velocity = new Vector2(Mathf.Abs(rigid_body.velocity.x), rigid_body.velocity.y);
+                        rigid_body.AddForce(new Vector2(TopSpeed, 0));
+                        SoundManager.instance.PlaySingle(RicochetSound);
                     }
                 }
             }

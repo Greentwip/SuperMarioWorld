@@ -20,6 +20,8 @@ public class Controller : MonoBehaviour {
 
     GameObject item_held;
 
+    public AudioClip KickSoundEffect;
+    public AudioClip StompSoundEffect;
 
     private void Awake()
     {
@@ -73,10 +75,7 @@ public class Controller : MonoBehaviour {
 
         item_rigid_body.AddForce(new Vector2(KickPower * local_scale.x, 0));
 
-        if(item.GetComponent<AudioSource>() != null)
-        {
-            item.GetComponent<AudioSource>().Play();
-        }
+        SoundManager.instance.PlaySingle(KickSoundEffect);
     }
 
     void FixedUpdate()
@@ -249,7 +248,25 @@ public class Controller : MonoBehaviour {
     bool is_running = false;
     bool is_turbo = false;
 
-    void OnCollisionEnter2D(Collision2D other)
+    /// <summary>
+    /// @TODO with child trigger, add collider to react to physics and trigger to interact with items/enemies
+    /// </summary>
+    void OnTriggerExit2D(Collider2D other)
+    {
+        Debug.Log("@TODO make me pass through the shell");
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        Debug.Log("trigger exit 3d");
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("trigger 3d");
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
     {
         // If the player enters the trigger zone...
         if (other.gameObject.tag == "Shell")
@@ -273,7 +290,9 @@ public class Controller : MonoBehaviour {
                         if (collider.gameObject.tag == "Shell")
                         {
                             var player_rigid_body = GetComponent<Rigidbody2D>();
+                            player_rigid_body.velocity = new Vector2(player_rigid_body.velocity.x, 0);
                             player_rigid_body.AddForce(new Vector2(0, SmallJumpForce));
+                            SoundManager.instance.PlaySingle(StompSoundEffect);
                         }
                     }
                 }
