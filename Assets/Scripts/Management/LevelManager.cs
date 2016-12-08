@@ -24,12 +24,16 @@ public class LevelManager : MonoBehaviour {
 
     public enum layer_masks
     {
+        platform = 8,
         player = 10,
-        enemy = 11
+        enemy = 11,
+        held_item = 12
     }
 
     void Start()
     {
-        //Physics2D.IgnoreLayerCollision((int)layer_masks.player, (int)layer_masks.enemy, true);
+        Physics2D.IgnoreLayerCollision((int)layer_masks.player, (int)layer_masks.enemy, true);
+        Physics2D.IgnoreLayerCollision((int)layer_masks.held_item, (int)layer_masks.platform, true);
+        Physics2D.IgnoreLayerCollision((int)layer_masks.held_item, (int)layer_masks.enemy, true);
     }
 }

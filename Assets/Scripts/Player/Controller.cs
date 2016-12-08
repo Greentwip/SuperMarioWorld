@@ -17,11 +17,14 @@ public class Controller : MonoBehaviour {
     public LayerMask PlatformMask;
 
     Animator animator;
+    bool is_running = false;
+    bool is_turbo = false;
 
     GameObject item_held;
 
     public AudioClip KickSoundEffect;
     public AudioClip StompSoundEffect;
+    public AudioClip JumpSoundEffect;
 
     private void Awake()
     {
@@ -44,10 +47,20 @@ public class Controller : MonoBehaviour {
         if (item_held == null)
         {
             item_held = item;
+            var hand_joint = this.transform.FindChild("hand_joint");
+
             item_held.transform.parent = this.transform;
+            var position = hand_joint.transform.localPosition;
+            item_held.transform.localPosition = new Vector2(position.x + 6 * hand_joint.localScale.x, 
+                                                            position.y - 7);
+
+            animator.SetBool("is_holding_item", true);
 
             var item_rigid_body = item.GetComponent<Rigidbody2D>();
             Destroy(item_rigid_body);
+
+            item_held.layer = (int) LevelManager.layer_masks.held_item;
+            
         }
     }
 
@@ -62,6 +75,9 @@ public class Controller : MonoBehaviour {
             item_rigid_body.freezeRotation = true;
 
             kick_item(item_held);
+            item_held.layer = (int)LevelManager.layer_masks.enemy;
+
+            animator.SetBool("is_holding_item", false);
 
             item_held = null;
         }
@@ -77,7 +93,6 @@ public class Controller : MonoBehaviour {
 
         SoundManager.instance.PlaySingle(KickSoundEffect);
     }
-
     void FixedUpdate()
     {
 
@@ -189,6 +204,7 @@ public class Controller : MonoBehaviour {
         // validation for jumping
         if (Input.GetKeyDown(KeyCode.Space) && on_ground)   {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0, JumpForce)); // adding jump force
+            SoundManager.instance.PlaySingle(JumpSoundEffect);
         }
 
         // validation for running
@@ -244,82 +260,6 @@ public class Controller : MonoBehaviour {
         }
 
     }
-
-    bool is_running = false;
-    bool is_turbo = false;
-
-    /// <summary>
-    /// @TODO with child trigger, add collider to react to physics and trigger to interact with items/enemies
-    /// </summary>
-    void OnTriggerExit2D(Collider2D other)
-    {
-        Debug.Log("@TODO make me pass through the shell");
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        Debug.Log("trigger exit 3d");
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("trigger 3d");
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        // If the player enters the trigger zone...
-        if (other.gameObject.tag == "Shell")
-        {
-            var shell = other.gameObject.GetComponent<Shell>();
-
-            if (shell.is_moving())
-            {
-                // ray tracing
-                var ray = transform.FindChild("ray");
-
-                var ray_start = ray.transform.position;
-                var ray_top = new Vector2(ray.transform.position.x, ray.transform.position.y - 4);
-                RaycastHit2D[] top_hits = Physics2D.LinecastAll(ray_start, ray_top);
-
-                foreach (RaycastHit2D hit in top_hits)
-                {
-                    var collider = hit.collider;
-                    if (collider != null)
-                    {
-                        if (collider.gameObject.tag == "Shell")
-                        {
-                            var player_rigid_body = GetComponent<Rigidbody2D>();
-                            player_rigid_body.velocity = new Vector2(player_rigid_body.velocity.x, 0);
-                            player_rigid_body.AddForce(new Vector2(0, SmallJumpForce));
-                            SoundManager.instance.PlaySingle(StompSoundEffect);
-                        }
-                    }
-                }
-
-                shell.is_moving(false);
-                var rigid_body = shell.GetComponent<Rigidbody2D>();
-                rigid_body.velocity = new Vector2();
-            }
-            else
-            {
-                // verify pressed key
-                if (Input.GetKey(KeyCode.Z))
-                {
-                    pick_item_up(other.gameObject);
-                }
-                else
-                {
-                    kick_item(other.gameObject);
-                }
-            }                        
-        }
-
-    }
-    /*private void OnCollisionEnter(Collision collision) //@TODO
-    {
-        //collision.gameObject.layer == PlatformMask && collision.transform.nor
-    }*/
 
 
 }

@@ -6,8 +6,9 @@ public class Shell : MonoBehaviour {
 
     float XSpeed;
     float Acceleration = 96;
-    float TopSpeed = 320;
+    float TopSpeed = 280;
     float ray_length = 16;
+    float ray_offset = 8;
 
     bool _is_moving = false;
 
@@ -77,9 +78,9 @@ public class Shell : MonoBehaviour {
             // ray tracing
             var ray = transform.FindChild("ray");
 
-            var ray_start = ray.transform.position;
-            var ray_right = new Vector2(ray.transform.position.x + ray_length, ray.transform.position.y);
-            var ray_left  = new Vector2(ray.transform.position.x - ray_length, ray.transform.position.y);
+            var ray_start = new Vector2(ray.transform.position.x, ray.transform.position.y + ray_offset);
+            var ray_right = new Vector2(ray.transform.position.x + ray_length, ray.transform.position.y + ray_offset);
+            var ray_left = new Vector2(ray.transform.position.x - ray_length, ray.transform.position.y + ray_offset);
 
             RaycastHit2D[] right_hits = Physics2D.LinecastAll(ray_start, ray_right);
             RaycastHit2D[] left_hits  = Physics2D.LinecastAll(ray_start, ray_left);
