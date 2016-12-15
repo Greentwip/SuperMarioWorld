@@ -79,6 +79,10 @@ public class Trigger : MonoBehaviour {
                     controller.kick_item(other.gameObject);
                 }
             }
+        } else if(other.gameObject.tag == "Mushroom")
+        {
+            Destroy(other.gameObject);
+            controller.trigger_power_change(Controller.power_status.mushroom);
         }
 
     }

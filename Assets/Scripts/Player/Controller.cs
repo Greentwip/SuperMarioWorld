@@ -26,6 +26,60 @@ public class Controller : MonoBehaviour {
     public AudioClip StompSoundEffect;
     public AudioClip JumpSoundEffect;
 
+    public AudioClip PowerUpSoundEffect;
+    public AudioClip PowerDownSoundEffect;
+
+    public enum power_status
+    {
+        none, 
+        mushroom, 
+        feather, 
+        flower
+    }
+
+    power_status _power_status;
+
+    public power_status query_power_status()
+    {
+        return this._power_status;
+    }
+
+    public void trigger_power_change(power_status status)
+    {
+        //@TODO store previous power-up
+        
+        switch (this._power_status)
+        {
+            default:
+                break;
+        }
+
+
+        switch (status)
+        {
+            case power_status.none:
+            break;
+
+            case power_status.mushroom:
+            {
+                if (this._power_status == power_status.none)
+                {
+                    SoundManager.instance.PlaySingle(PowerUpSoundEffect);
+
+                }
+                else
+                {
+
+                }
+            }
+            break;
+        }
+
+        this._power_status = status;
+    }
+
+    //@TODO freeze coroutine for powerups 
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -103,6 +157,7 @@ public class Controller : MonoBehaviour {
         float x_movement = 0.0f;
 
         x_movement = x_input * WalkSpeed;
+        
         // crouching happens when y_input is less than 0 (down axis pressed)
         bool is_crouching = y_input < 0;
 
@@ -122,7 +177,8 @@ public class Controller : MonoBehaviour {
             }
             
         }
-        else if (x_input > 0) // x_input is being right pressed
+
+        if (x_input > 0) // x_input is being right pressed
         {
             if (!is_crouching || (is_crouching && !on_ground))
             // can only change if not crouching or crouching and jumping
@@ -133,16 +189,17 @@ public class Controller : MonoBehaviour {
         }
 
         // x_input != 0 means horizontal movement
-        if (x_input != 0)
+        if (x_input != 0.0f && Mathf.Abs(x_input) >= 0.3f)
         {
             animator.SetFloat("x_speed", 1);
         }
-        else // x_input == 0 means no horizontal movement
+        else // abs x_input <= 0.1f means no horizontal movement
         {
             animator.SetFloat("x_speed", -1);
+            x_input = 0.0f;
+            x_movement = 0.0f;
         }
-
-     
+                
         if (is_crouching)
         {
             animator.SetBool("is_crouching", true); // setting animator parameter
@@ -183,11 +240,11 @@ public class Controller : MonoBehaviour {
 
             // drifting
 
-            if(clamp_velocity.x > 0 && x_input < 0.0)
+            if(clamp_velocity.x > 0 && x_input < 0.3f)
             {
                 animator.SetBool("is_drifting", true);
                 animator.SetInteger("drift", 1);
-            } else if(clamp_velocity.x < 0 && x_input > 0)
+            } else if(clamp_velocity.x < 0 && x_input > 0.3f)
             {
                 animator.SetBool("is_drifting", true);
                 animator.SetInteger("drift", 1);
