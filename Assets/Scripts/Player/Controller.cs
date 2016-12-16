@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.Animations;
 
 public class Controller : MonoBehaviour {
 
@@ -28,6 +29,10 @@ public class Controller : MonoBehaviour {
 
     public AudioClip PowerUpSoundEffect;
     public AudioClip PowerDownSoundEffect;
+
+    public UnityEditor.Animations.AnimatorController SmallAnimationController;
+    public UnityEditor.Animations.AnimatorController MushroomAnimationController;
+    public UnityEditor.Animations.AnimatorController FlowerAnimationController;
 
     public enum power_status
     {
@@ -65,7 +70,7 @@ public class Controller : MonoBehaviour {
                 if (this._power_status == power_status.none)
                 {
                     SoundManager.instance.PlaySingle(PowerUpSoundEffect);
-
+                    this.animator.runtimeAnimatorController = this.MushroomAnimationController;
                 }
                 else
                 {
